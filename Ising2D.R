@@ -11,10 +11,12 @@
 library(ggplot2)
 library(raster)
 # array size
-N = 10
+N = 40
 J = 1
 beta = 3
+conv = 800   # convergence factor
 path.FIGS = 'images'
+path.DATA = 'data'
 
 
 # cumputation
@@ -31,7 +33,7 @@ computeIsing <- function(num.iter, J, beta) {
       spin[x,y] <<- -spin[x,y] 
     } else {
       # flip coin
-      if (runif(1)< exp(-dE*beta)) {
+      if (runif(1) < exp(-dE*beta)) {
         spin[x,y] <<-  -spin[x,y]
       }
     }
@@ -52,7 +54,7 @@ TSeq = seq(0.5,5, by=0.1)
 bSeq = 1/TSeq
 for(b in bSeq) {
   spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
-  computeIsing(400*N*N, J, b)
+  computeIsing(conv*N*N, J, b)
   Mavg = c(Mavg, sum(spin)/(N*N))
 }
 
@@ -63,8 +65,11 @@ d = data.frame(
 )
 ggplot(d, aes(1/beta/J, abs(M))) +
   geom_point(col='red', size=2) + 
-  ggtitle(paste('N=',N)) + 
+  ggtitle(paste('N=',N,'x',N,' conv=',conv)) + 
   xlab('T/J') +
   ylab('|M|') +
   theme_bw()
-ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'.png')), width=4, height=3, dpi=220)
+ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-c',conv,'.png')), width=4, height=3, dpi=220)
+write.csv(d,file.path(path.DATA,paste0('Ising2D-',N,'x',N,'-c',conv,'.csv')), row.names=FALSE)
+
+
