@@ -16,7 +16,7 @@
 library(ggplot2)
 library(raster)
 
-N = 40  # array size
+N = 50  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
 conv = 800   # convergence factor
@@ -77,7 +77,7 @@ ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Domains.png')), width=4,h
 d.runTimeAll = read.csv(file.runTime, stringsAsFactors = FALSE)
 d.runTime = data.frame(N,conv,date=Sys.Date(), start.time=Sys.time(),end.time=0,diff.s=0)
 Mavg = c()
-TSeq = seq(0.5,5, by=0.1)
+TSeq = seq(0.5,4, by=0.05)
 bSeq = 1/TSeq
 for(b in bSeq) {
   print(b)
