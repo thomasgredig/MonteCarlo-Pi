@@ -101,6 +101,7 @@ d = read.csv(file.path(path.DATA,paste0('Ising2D-',N,'x',N,'-c',conv,'.csv')))
 d = data.frame(
   beta = bSeq,
   T.J = 1/bSeq/J,
+  J,
   N,
   conv,
   M = Mavg,
