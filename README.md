@@ -19,3 +19,10 @@ The accuracy gets better with iterations. We can fit an power law that predicts 
 The random generator is quite important, so here is a rendering of an image that shows the randomness of the generator. This image has 10000 data points:
 
 ![Randomness of the Generator](images/random-num-gen.png)
+
+
+## Ising 2D Model
+
+Monte Carlo simulation for Ising 2D model with example result:
+
+![Ising 2D transition expected near 2.3](images/Ising2D.png)
