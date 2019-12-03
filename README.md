@@ -29,7 +29,7 @@ The Ising2D model is initialized as follows:
 
 After a bit of Monte Carlo, a domain pattern emerges at low enough temperatures:
 
-![200x200 random Ising matrix](images/Ising2D-200x200-Domain.png)
+![200x200 random Ising matrix](images/Ising2D-200x200-Domains.png)
 
 
 Repeating this procedure over a range of temperatures and waiting for convergence, one finds the phase transition where domains can form:
