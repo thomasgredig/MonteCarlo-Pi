@@ -3,7 +3,7 @@
  
 ## Timing
 
-Computing 2 million steps takes about 103 ms. A typical result is `3.142`, so result is about 0.01% accurate. 
+Computing 2 million steps takes about 103 ms on a typical computer. A typical result is `3.142`, so result is about 0.01% accurate. 
 
 
 ## Model and Accuracy

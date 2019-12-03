@@ -6,7 +6,7 @@
 #
 ######################################
 
-# number of iterations
+# number of iterations and figure path
 NUM = 2e6
 path.FIGS = 'images'
 library(ggplot2)
@@ -31,6 +31,7 @@ for(i in seq(from = 1E5, to=1E6, length.out=30)) {
   accuracy = (result.pi / pi - 1) * 100
   r = rbind(r, data.frame(i, pi = result.pi, accuracy))
 }
+write.csv(r[,1:3], file='pi-simulation-data.csv', row.names = FALSE)
 
 # add a fit using an exponential model
 r$accuracyABS = abs(r$accuracy)
