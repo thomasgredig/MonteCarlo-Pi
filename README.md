@@ -1,5 +1,5 @@
 # MonteCarlo-Pi
- simple pi generator to test speed in R
+ simple pi number generator to test speed in R
  
 ## Timing
 
