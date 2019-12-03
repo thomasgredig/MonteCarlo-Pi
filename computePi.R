@@ -1,0 +1,40 @@
+######################################
+# Monte Carlo method for computing Pi
+# Adaption from earlier routine in C
+#
+# (c) 2019 Thomas Gredig
+#
+######################################
+
+# number of iterations
+NUM = 2e6
+
+# computes pi with num.iterations
+computePi <- function(num.iterations) {
+  q.x = runif(num.iterations)
+  q.y = runif(num.iterations)
+  l = q.x*q.x+q.y*q.y
+  n = length(which(l<=1))
+  n/num.iterations*4
+}
+
+# determine time
+system.time({
+  result.pi = computePi(NUM)
+})
+
+r=data.frame()
+for(i in seq(from = 1000, to=2E7, length.out=200)) {
+  result.pi = computePi(i)
+  accuracy = (result.pi / pi - 1) * 100
+  r = rbind(r, data.frame(i, pi = result.pi, accuracy))
+}
+
+library(ggplot2)
+ggplot(r, aes(i/1e6, abs(accuracy))) + 
+  geom_point(col='red', size=2) +
+  scale_y_log10() + 
+  theme_bw() + 
+  xlab('iterations in millions') + 
+  ylab('accuracy (%)')
+ggsave('pi-accuracy.png', width=4,height=3, dpi=300)
