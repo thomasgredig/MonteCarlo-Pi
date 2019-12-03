@@ -16,10 +16,10 @@
 library(ggplot2)
 library(raster)
 
-N = 8  # array size
+N = 10  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
-conv = 1000   # convergence factor
+conv = 400   # convergence factor
 path.FIGS = 'images'
 path.DATA = 'data'
 file.runTime = file.path(path.DATA,'runTimes.csv')
@@ -59,8 +59,8 @@ plot(raster(spin))
 
 # Computation Intesive Run: M vs T
 ##################################
-d.runTime = read.csv(file.runTime)
-d.runTime = rbind(data.frame(N,conv,start.time=Sys.time(),end.time=0,diff.s=0))
+d.runTimeAll = read.csv(file.runTime, stringsAsFactors = FALSE)
+d.runTime = data.frame(N,conv,date=Sys.Date(), start.time=Sys.time(),end.time=0,diff.s=0)
 Mavg = c()
 TSeq = seq(0.5,5, by=0.1)
 bSeq = 1/TSeq
@@ -71,7 +71,8 @@ for(b in bSeq) {
 }
 d.runTime$end.time = Sys.time()
 d.runTime$diff.s = as.numeric(d.runTime$end.time-d.runTime$start.time)
-write.csv(d.runTime,file=file.runTime,row.names = FALSE)
+d.runTimeAll = rbind(d.runTimeAll,d.runTime)
+write.csv(d.runTimeAll,file=file.runTime,row.names = FALSE)
 
 # Graphing of Data
 ##################
