@@ -16,10 +16,11 @@
 library(ggplot2)
 library(raster)
 
-N = 200  # array size
+N = 40  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
-conv = 100   # convergence factor
+conv = 800   # convergence factor
+reInit = FALSE # re-initialize random matrix
 path.FIGS = 'images'
 path.DATA = 'data'
 file.runTime = file.path(path.DATA,'runTimes.csv')
@@ -67,7 +68,7 @@ spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
 ###############
 print(rasterGraph(spin))
 ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Random.png')), width=4,height=4,dpi=220)
-computeIsing(100*N*N, J, beta)
+computeIsing(conv*N*N/100, J, beta)
 print(rasterGraph(spin))
 ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Domains.png')), width=4,height=4,dpi=220)
 
@@ -80,7 +81,7 @@ TSeq = seq(0.5,5, by=0.1)
 bSeq = 1/TSeq
 for(b in bSeq) {
   print(b)
-  spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
+  if(reInit) { spin = matrix(data=sign(runif(N*N)-0.5), nrow=N) }
   computeIsing(conv*N*N, J, b)
   Mavg = c(Mavg, sum(spin)/(N*N))
 }
@@ -97,7 +98,7 @@ d = data.frame(
 )
 ggplot(d, aes(1/beta/J, abs(M))) +
   geom_point(col='red', size=2) + 
-  ggtitle(paste('N=',N,'x',N,' conv=',conv)) + 
+  ggtitle(paste('N=',N,'x',N,' conv=',conv, ' reInit=',reInit)) + 
   xlab('T/J') +
   ylab('|M|') +
   theme_bw()
