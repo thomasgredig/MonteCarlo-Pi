@@ -4,22 +4,28 @@
 # test the speed in R
 #
 # see https://arxiv.org/pdf/0803.0217.pdf
+# see http://micro.stanford.edu/~caiwei/me334/Chap12_Ising_Model_v04.pdf 
+# see https://github.com/basilwong/monte-carlo-2D-ising
 #
 # (c) 2019 Thomas Gredig
 #########################################
 
+
+# Ising2D Model Parameters
+##########################
 library(ggplot2)
 library(raster)
-# array size
-N = 40
-J = 1
-beta = 3
-conv = 800   # convergence factor
+
+N = 8  # array size
+J = 1   # interaction strength
+beta = 3  # inverse temperature
+conv = 1000   # convergence factor
 path.FIGS = 'images'
 path.DATA = 'data'
+file.runTime = file.path(path.DATA,'runTimes.csv')
 
-
-# cumputation
+# Computation
+#############
 computeIsing <- function(num.iter, J, beta) {
   for(i in 1:num.iter) {
     # choose random spin
@@ -40,16 +46,22 @@ computeIsing <- function(num.iter, J, beta) {
   }
 }
 
-# initialize array
+# Array Initialization
+######################
 spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
-sum(spin)
 
+# Sample Output
+###############
 plot(raster(spin))
 computeIsing(100*N*N, J, beta)
 plot(raster(spin))
 
+
+# Computation Intesive Run: M vs T
+##################################
+d.runTime = read.csv(file.runTime)
+d.runTime = rbind(data.frame(N,conv,start.time=Sys.time(),end.time=0,diff.s=0))
 Mavg = c()
-# bSeq = seq(0.1,1, by=0.01)
 TSeq = seq(0.5,5, by=0.1)
 bSeq = 1/TSeq
 for(b in bSeq) {
@@ -57,8 +69,12 @@ for(b in bSeq) {
   computeIsing(conv*N*N, J, b)
   Mavg = c(Mavg, sum(spin)/(N*N))
 }
+d.runTime$end.time = Sys.time()
+d.runTime$diff.s = as.numeric(d.runTime$end.time-d.runTime$start.time)
+write.csv(d.runTime,file=file.runTime,row.names = FALSE)
 
-
+# Graphing of Data
+##################
 d = data.frame(
   beta = bSeq,
   M = Mavg
@@ -71,5 +87,3 @@ ggplot(d, aes(1/beta/J, abs(M))) +
   theme_bw()
 ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-c',conv,'.png')), width=4, height=3, dpi=220)
 write.csv(d,file.path(path.DATA,paste0('Ising2D-',N,'x',N,'-c',conv,'.csv')), row.names=FALSE)
-
-
