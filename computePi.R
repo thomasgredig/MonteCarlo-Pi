@@ -39,3 +39,16 @@ ggplot(r, aes(i/1e6, abs(accuracy))) +
   xlab('iterations in millions') + 
   ylab('accuracy (%)')
 ggsave('pi-accuracy.png', width=4,height=3, dpi=300)
+
+
+r1 = subset(r, i>0.5e6)
+plot(r1$i, r1$pi)
+abline(h=pi, col='red', lwd=2)
+
+
+# check random numbers
+dr = data.frame(
+  x = runif(10000),
+  y = runif(10000))
+ggplot(dr, aes(x,y)) + geom_point(col='red', size=0.2) + theme_bw()
+ggsave('random-num-gen.png', width=4, height=4, dpi=300)
