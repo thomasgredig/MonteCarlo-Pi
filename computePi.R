@@ -9,6 +9,7 @@
 # number of iterations
 NUM = 2e6
 path.FIGS = 'images'
+library(ggplot2)
 
 # computes pi with num.iterations
 computePi <- function(num.iterations) {
@@ -31,16 +32,6 @@ for(i in seq(from = 1E5, to=1E6, length.out=30)) {
   r = rbind(r, data.frame(i, pi = result.pi, accuracy))
 }
 
-library(ggplot2)
-ggplot(r, aes(i/1e6, abs(accuracy))) + 
-  geom_point(col='red', size=2) +
-  scale_y_log10() + 
-  scale_x_log10() + 
-  theme_bw() + 
-  xlab('iterations in millions') + 
-  ylab('accuracy (%)')
-ggsave(file.path(path.FIGS,'pi-accuracy.png'), width=4,height=3, dpi=300)
-
 # add a fit using an exponential model
 r$accuracyABS = abs(r$accuracy)
 nls(data = r,
@@ -48,10 +39,31 @@ nls(data = r,
     start = list(A=1e2,w=-0.59)) -> fit
 summary(fit)
 q1 = predict(fit, list(i=r$i))
+r1 = data.frame(i = r$i,
+                pi = pi,
+                accuracy = q1,
+                accuracyABS = q1)
+r1$type = 'model'
+str(r1)
+r$type = 'Monte Carlo'
+str(r)
+r2 = rbind(r,r1)
+r2$type = factor(r2$type)
 
-plot(r$i, abs(r$accuracy), col='red', log='xy')
-points(r$i, q1)
+ggplot(r, aes(i/1e6, accuracyABS, color=type)) + 
+  geom_point( size=2.5, col='black') + geom_point( size=2, alpha=0.5) +
+  geom_line(data=r1, size=2, alpha=0.7) + 
+  scale_y_log10() + 
+  scale_x_log10() + 
+  theme_bw() + 
+  xlab('iterations in millions') + 
+  ylab('accuracy (%)') + 
+  theme(legend.position = c(0.05,0.05),
+        legend.justification = c(0,0))
+ggsave(file.path(path.FIGS,'pi-accuracy.png'), width=4,height=3, dpi=300)
 
+
+# pi plot
 r1 = subset(r, i>0.5e6)
 plot(r1$i, r1$pi)
 abline(h=pi, col='red', lwd=2)
@@ -62,4 +74,4 @@ dr = data.frame(
   x = runif(10000),
   y = runif(10000))
 ggplot(dr, aes(x,y)) + geom_point(col='red', size=0.2) + theme_bw()
-ggsave(file.path(path.FIGS,'random-num-gen.png'), width=4, height=4, dpi=300)
+ggsave(file.path(path.FIGS,'random-num-gen.png'), width=4, height=4, dpi=220)
