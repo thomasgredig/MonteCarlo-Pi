@@ -23,6 +23,15 @@ The random generator is quite important, so here is a rendering of an image that
 
 ## Ising 2D Model
 
-Monte Carlo simulation for Ising 2D model with example result:
+The Ising2D model is initialized as follows:
 
-![Ising 2D transition expected near 2.3](images/Ising2D.png)
+![200x200 random Ising matrix](images/Ising2D-200x200-Random.png)
+
+After a bit of Monte Carlo, a domain pattern emerges at low enough temperatures:
+
+![200x200 random Ising matrix](images/Ising2D-200x200-Domain.png)
+
+
+Repeating this procedure over a range of temperatures and waiting for convergence, one finds the phase transition where domains can form:
+
+![Ising 2D transition expected near 2.3](images/Ising2D-20x20-c1200.png)

@@ -16,10 +16,10 @@
 library(ggplot2)
 library(raster)
 
-N = 10  # array size
+N = 100  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
-conv = 10000   # convergence factor
+conv = 100   # convergence factor
 path.FIGS = 'images'
 path.DATA = 'data'
 file.runTime = file.path(path.DATA,'runTimes.csv')
@@ -52,10 +52,21 @@ spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
 
 # Sample Output
 ###############
-plot(raster(spin))
+df = expand.grid(x = 1:N, y = 1:N)
+df$spin = as.vector(spin)
+ggplot(df, aes(x,y, fill=spin)) + geom_raster(col='red') + 
+  scale_x_continuous(expand=c(0,0))+
+  scale_fill_gradientn(colors=c("blue","red"))+
+  scale_y_continuous(expand=c(0,0))+
+  theme_bw() + theme(legend.position='none')
 computeIsing(100*N*N, J, beta)
-plot(raster(spin))
-
+df = expand.grid(x = 1:N, y = 1:N)
+df$spin = as.vector(spin)
+ggplot(df, aes(x,y, fill=spin)) + geom_raster() +
+  scale_x_continuous(expand=c(0,0))+
+  scale_fill_gradientn(colors=c("blue","red"))+
+  scale_y_continuous(expand=c(0,0))+
+  theme_bw() + theme(legend.position='none')
 
 # Computation Intesive Run: M vs T
 ##################################
@@ -65,6 +76,7 @@ Mavg = c()
 TSeq = seq(0.5,5, by=0.1)
 bSeq = 1/TSeq
 for(b in bSeq) {
+  print(b)
   spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
   computeIsing(conv*N*N, J, b)
   Mavg = c(Mavg, sum(spin)/(N*N))
