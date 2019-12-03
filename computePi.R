@@ -24,7 +24,7 @@ system.time({
 })
 
 r=data.frame()
-for(i in seq(from = 1000, to=2E7, length.out=200)) {
+for(i in seq(from = 1E5, to=1E6, length.out=30)) {
   result.pi = computePi(i)
   accuracy = (result.pi / pi - 1) * 100
   r = rbind(r, data.frame(i, pi = result.pi, accuracy))
@@ -34,6 +34,7 @@ library(ggplot2)
 ggplot(r, aes(i/1e6, abs(accuracy))) + 
   geom_point(col='red', size=2) +
   scale_y_log10() + 
+  scale_x_log10() + 
   theme_bw() + 
   xlab('iterations in millions') + 
   ylab('accuracy (%)')
