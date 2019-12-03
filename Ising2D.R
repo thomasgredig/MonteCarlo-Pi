@@ -19,7 +19,7 @@ library(raster)
 N = 10  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
-conv = 400   # convergence factor
+conv = 10000   # convergence factor
 path.FIGS = 'images'
 path.DATA = 'data'
 file.runTime = file.path(path.DATA,'runTimes.csv')
