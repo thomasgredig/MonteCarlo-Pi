@@ -16,10 +16,10 @@
 library(ggplot2)
 library(raster)
 
-N = 50  # array size
+N = 10  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
-conv = 800   # convergence factor
+conv = 20000   # convergence factor
 reInit = FALSE # re-initialize random matrix
 path.FIGS = 'images'
 path.DATA = 'data'
@@ -75,28 +75,39 @@ ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Domains.png')), width=4,h
 # Computation Intesive Run: M vs T
 ##################################
 d.runTimeAll = read.csv(file.runTime, stringsAsFactors = FALSE)
-d.runTime = data.frame(N,conv,date=Sys.Date(), start.time=Sys.time(),end.time=0,diff.s=0)
+d.runTime = data.frame(N,conv,date=Sys.Date(), start.time=as.numeric(Sys.time()),end.time=0,diff.s=0)
 Mavg = c()
+M2avg = c()
 TSeq = seq(0.5,4, by=0.05)
 bSeq = 1/TSeq
 for(b in bSeq) {
   print(b)
   if(reInit) { spin = matrix(data=sign(runif(N*N)-0.5), nrow=N) }
   computeIsing(conv*N*N, J, b)
-  Mavg = c(Mavg, sum(spin)/(N*N))
+  Mavg = c(Mavg, sum(spin))
+  M2avg = c(M2avg, sum(spin*spin))
 }
-d.runTime$end.time = Sys.time()
-d.runTime$diff.s = as.numeric(d.runTime$end.time-d.runTime$start.time)
+d.runTime$end.time = as.numeric(Sys.time())
+d.runTime$diff.s = d.runTime$end.time-d.runTime$start.time
+d.runTime$reInit = reInit
 d.runTimeAll = rbind(d.runTimeAll,d.runTime)
 write.csv(d.runTimeAll,file=file.runTime,row.names = FALSE)
 
 # Graphing of Data
 ##################
+N=50
+conv = 800
+d = read.csv(file.path(path.DATA,paste0('Ising2D-',N,'x',N,'-c',conv,'.csv')))
 d = data.frame(
   beta = bSeq,
-  M = Mavg
+  T.J = 1/bSeq/J,
+  N,
+  conv,
+  M = Mavg,
+  M2 = M2avg,
+  chi = ((M2avg*M2avg/(N*N))-(Mavg*Mavg/(N*N)))
 )
-ggplot(d, aes(1/beta/J, abs(M))) +
+ggplot(d, aes(T.J, abs(M))) +
   geom_point(col='red', size=2) + 
   ggtitle(paste('N=',N,'x',N,' conv=',conv, ' reInit=',reInit)) + 
   xlab('T/J') +
@@ -104,3 +115,11 @@ ggplot(d, aes(1/beta/J, abs(M))) +
   theme_bw()
 ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-c',conv,'.png')), width=4, height=3, dpi=220)
 write.csv(d,file.path(path.DATA,paste0('Ising2D-',N,'x',N,'-c',conv,'.csv')), row.names=FALSE)
+
+d$dM = c(0,abs(diff(d$M)))
+ggplot(d, aes(T.J, dM)) +
+  geom_point(col='red', size=2) + 
+  ggtitle(paste('N=',N,'x',N,' conv=',conv, ' reInit=',reInit)) + 
+  xlab('T/J') +
+  ylab(expression(paste(chi))) +
+  theme_bw()
