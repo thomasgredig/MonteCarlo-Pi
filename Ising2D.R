@@ -16,7 +16,7 @@
 library(ggplot2)
 library(raster)
 
-N = 100  # array size
+N = 200  # array size
 J = 1   # interaction strength
 beta = 3  # inverse temperature
 conv = 100   # convergence factor
@@ -46,27 +46,30 @@ computeIsing <- function(num.iter, J, beta) {
   }
 }
 
+
+
+rasterGraph <- function(spinMatrix) {
+  df = expand.grid(x = 1:N, y = 1:N)
+  df$spin = as.vector(spinMatrix)
+  ggplot(df, aes(x,y, fill=spin)) + geom_raster() + 
+    scale_x_continuous(expand=c(0,0))+
+    scale_fill_gradientn(colors=c("blue","red"))+
+    scale_y_continuous(expand=c(0,0))+
+    theme_bw() + theme(legend.position='none')
+}
+
+
 # Array Initialization
 ######################
 spin = matrix(data=sign(runif(N*N)-0.5), nrow=N)
 
 # Sample Output
 ###############
-df = expand.grid(x = 1:N, y = 1:N)
-df$spin = as.vector(spin)
-ggplot(df, aes(x,y, fill=spin)) + geom_raster(col='red') + 
-  scale_x_continuous(expand=c(0,0))+
-  scale_fill_gradientn(colors=c("blue","red"))+
-  scale_y_continuous(expand=c(0,0))+
-  theme_bw() + theme(legend.position='none')
+print(rasterGraph(spin))
+ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Random.png')), width=4,height=4,dpi=220)
 computeIsing(100*N*N, J, beta)
-df = expand.grid(x = 1:N, y = 1:N)
-df$spin = as.vector(spin)
-ggplot(df, aes(x,y, fill=spin)) + geom_raster() +
-  scale_x_continuous(expand=c(0,0))+
-  scale_fill_gradientn(colors=c("blue","red"))+
-  scale_y_continuous(expand=c(0,0))+
-  theme_bw() + theme(legend.position='none')
+print(rasterGraph(spin))
+ggsave(file.path(path.FIGS,paste0('Ising2D-',N,'x',N,'-Domains.png')), width=4,height=4,dpi=220)
 
 # Computation Intesive Run: M vs T
 ##################################
