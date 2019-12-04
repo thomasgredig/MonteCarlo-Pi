@@ -1,5 +1,13 @@
 # MonteCarlo-Pi
- simple pi number generator to test speed in R, demonstrates how to run code on multiple cores in parallel, see [](computePi-parallel.R).
+ Simple pi number generator to test speed in R, demonstrates how to run code on multiple cores in parallel, see [computePi-parallel.R](computePi-parallel.R). The code is:
+
+ ```R
+  q.x = runif(num.iterations)
+  q.y = runif(num.iterations)
+  l = q.x*q.x+q.y*q.y
+  n = length(which(l<=1))
+  pi = n/num.iterations*4
+ ```
 
 ## Timing
 
