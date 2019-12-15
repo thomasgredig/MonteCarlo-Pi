@@ -17,7 +17,7 @@ print(paste("Using",num.cores,"cores."))
 
 
 # number of iterations and figure path
-NUM = 100e6
+NUM = 10e6
 
 path.FIGS = 'images'
 library(ggplot2)
@@ -33,7 +33,7 @@ computePi <- function(num.iterations) {
 
 # computes pi with num.iterations
 computePiParallel <- function(num.iterations) {
-  c <- function(no) {
+  c1 <- function(no) {
     foreach (i=1:num.cores,.combine=rbind) %dopar% {
       q.x = runif(no)
       q.y = runif(no)
@@ -41,19 +41,19 @@ computePiParallel <- function(num.iterations) {
       n = length(which(l<=1))
     }
   }
-  sum(c(num.iterations/num.cores))/num.iterations*4
+  sum(c1(num.iterations/num.cores))/num.iterations*4
 }
 
 # determine time
 system.time({
   result.pi = computePi(NUM)
   print(result.pi)
-})
+})[3]
 
 system.time({
   result.pi = computePiParallel(NUM)
   print(result.pi)
-})
+})[3]
 
 
 
